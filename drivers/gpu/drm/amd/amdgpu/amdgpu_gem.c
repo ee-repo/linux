@@ -29,6 +29,7 @@
 #include <linux/module.h>
 #include <linux/pagemap.h>
 #include <linux/pci.h>
+#include <linux/dma-buf.h>
 
 #include <drm/amdgpu_drm.h>
 #include <drm/drm_debugfs.h>
@@ -105,7 +106,7 @@ void amdgpu_gem_force_release(struct amdgpu_device *adev)
 		spin_lock(&file->table_lock);
 		idr_for_each_entry(&file->object_idr, gobj, handle) {
 			WARN_ONCE(1, "And also active allocations!\n");
-			drm_gem_object_put_unlocked(gobj);
+			drm_gem_object_put(gobj);
 		}
 		idr_destroy(&file->object_idr);
 		spin_unlock(&file->table_lock);
@@ -271,7 +272,7 @@ int amdgpu_gem_create_ioctl(struct drm_device *dev, void *data,
 
 	r = drm_gem_handle_create(filp, gobj, &handle);
 	/* drop reference from allocate - handle holds it now */
-	drm_gem_object_put_unlocked(gobj);
+	drm_gem_object_put(gobj);
 	if (r)
 		return r;
 
@@ -355,7 +356,7 @@ user_pages_done:
 		amdgpu_ttm_tt_get_user_pages_done(bo->tbo.ttm);
 
 release_object:
-	drm_gem_object_put_unlocked(gobj);
+	drm_gem_object_put(gobj);
 
 	return r;
 }
@@ -374,11 +375,11 @@ int amdgpu_mode_dumb_mmap(struct drm_file *filp,
 	robj = gem_to_amdgpu_bo(gobj);
 	if (amdgpu_ttm_tt_get_usermm(robj->tbo.ttm) ||
 	    (robj->flags & AMDGPU_GEM_CREATE_NO_CPU_ACCESS)) {
-		drm_gem_object_put_unlocked(gobj);
+		drm_gem_object_put(gobj);
 		return -EPERM;
 	}
 	*offset_p = amdgpu_bo_mmap_offset(robj);
-	drm_gem_object_put_unlocked(gobj);
+	drm_gem_object_put(gobj);
 	return 0;
 }
 
@@ -448,7 +449,7 @@ int amdgpu_gem_wait_idle_ioctl(struct drm_device *dev, void *data,
 	} else
 		r = ret;
 
-	drm_gem_object_put_unlocked(gobj);
+	drm_gem_object_put(gobj);
 	return r;
 }
 
@@ -491,7 +492,7 @@ int amdgpu_gem_metadata_ioctl(struct drm_device *dev, void *data,
 unreserve:
 	amdgpu_bo_unreserve(robj);
 out:
-	drm_gem_object_put_unlocked(gobj);
+	drm_gem_object_put(gobj);
 	return r;
 }
 
@@ -690,7 +691,7 @@ error_backoff:
 	ttm_eu_backoff_reservation(&ticket, &list);
 
 error_unref:
-	drm_gem_object_put_unlocked(gobj);
+	drm_gem_object_put(gobj);
 	return r;
 }
 
@@ -766,7 +767,7 @@ int amdgpu_gem_op_ioctl(struct drm_device *dev, void *data,
 	}
 
 out:
-	drm_gem_object_put_unlocked(gobj);
+	drm_gem_object_put(gobj);
 	return r;
 }
 
@@ -803,7 +804,7 @@ int amdgpu_mode_dumb_create(struct drm_file *file_priv,
 
 	r = drm_gem_handle_create(file_priv, gobj, &handle);
 	/* drop reference from allocate - handle holds it now */
-	drm_gem_object_put_unlocked(gobj);
+	drm_gem_object_put(gobj);
 	if (r) {
 		return r;
 	}
@@ -854,7 +855,8 @@ static int amdgpu_debugfs_gem_bo_info(int id, void *ptr, void *data)
 	attachment = READ_ONCE(bo->tbo.base.import_attach);
 
 	if (attachment)
-		seq_printf(m, " imported from %p", dma_buf);
+		seq_printf(m, " imported from %p%s", dma_buf,
+			   attachment->peer2peer ? " P2P" : "");
 	else if (dma_buf)
 		seq_printf(m, " exported as %p", dma_buf);
 

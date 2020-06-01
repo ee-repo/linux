@@ -179,10 +179,7 @@ GEM Objects Lifetime
 
 All GEM objects are reference-counted by the GEM core. References can be
 acquired and release by calling drm_gem_object_get() and drm_gem_object_put()
-respectively. The caller must hold the :c:type:`struct drm_device <drm_device>`
-struct_mutex lock when calling drm_gem_object_get(). As a convenience, GEM
-provides drm_gem_object_put_unlocked() functions that can be called without
-holding the lock.
+respectively.
 
 When the last reference to a GEM object is released the GEM core calls
 the :c:type:`struct drm_driver <drm_driver>` gem_free_object_unlocked
@@ -372,15 +369,6 @@ GEM CMA Helper Functions Reference
 
 .. kernel-doc:: drivers/gpu/drm/drm_gem_cma_helper.c
    :export:
-
-VRAM Helper Function Reference
-==============================
-
-.. kernel-doc:: drivers/gpu/drm/drm_vram_helper_common.c
-   :doc: overview
-
-.. kernel-doc:: include/drm/drm_gem_vram_helper.h
-   :internal:
 
 GEM VRAM Helper Functions Reference
 -----------------------------------
