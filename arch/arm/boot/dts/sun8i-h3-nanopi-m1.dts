@@ -61,28 +61,29 @@
 		};
 	};
 	
-	    pcm5102a: pcm5102a {
-			#sound-dai-cells = <0>;
-			compatible = "ti,pcm5102a";
-			pcm510x,format = "i2s";
-		                status = "okay";
+	pcm5102a: pcm5102a {
+	  #sound-dai-cells = <0>;
+	  compatible = "ti,pcm5102a";
+	  pcm510x,format = "i2s";
+		status = "okay";
 	};
 
-			sound_i2s {
-				compatible = "simple-audio-card";
-				simple-audio-card,name = "I2S-master";
-				simple-audio-card,mclk-fs = <512>;
-				simple-audio-card,format = "i2s";
-		                status = "okay";
+	sound_i2s {
+		compatible = "simple-audio-card";
+		simple-audio-card,name = "I2S-master";
+		simple-audio-card,mclk-fs = <512>;
+		simple-audio-card,format = "i2s";
+	  status = "okay";
 
-				simple-audio-card,cpu {
-					sound-dai = <&i2s0>;
-				};
+		simple-audio-card,cpu {
+			sound-dai = <&i2s0>;
+		};
 
-				simple-audio-card,codec {
-					sound-dai = <&pcm5102a>;
-				};
-			};
+		simple-audio-card,codec {
+			sound-dai = <&pcm5102a>;
+		};
+
+	};
 	
 };
 
@@ -173,5 +174,7 @@
 };
 
 &i2s0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2s0_pins>;
 	status = "okay";
 };

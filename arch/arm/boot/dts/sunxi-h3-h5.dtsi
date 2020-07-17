@@ -509,6 +509,13 @@
 				pins = "PA15", "PA16";
 				function = "uart3";
 			};
+			
+      i2s0_pins: i2s0-pins {
+				/* I2S0 does not have external MCLK pin */
+				pins = "PA18", "PA19", "PA20", "PA21";
+				function = "i2s0";
+			};
+
 		};
 
 		timer@1c20c00 {
