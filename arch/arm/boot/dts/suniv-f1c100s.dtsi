@@ -36,6 +36,30 @@
 		};
 	};
 
+	dma: dma-controller@1c02000 {
+		compatible = "allwinner,suniv-dma";
+		reg = <0x01c02000 0x1000>;
+		interrupts = <18>;
+		clocks = <&ccu CLK_BUS_DMA>;
+		resets = <&ccu RST_BUS_DMA>;
+		#dma-cells = <2>;
+	};
+
+
+	i2s0: i2s@1c22000 {
+		#sound-dai-cells = <0>;
+		compatible = "allwinner,sun4i-a10-i2s";
+		reg = <0x01c22000 0x400>;
+		interrupts = <35>;
+		clocks = <&ccu CLK_BUS_I2S0>, <&ccu CLK_I2S>;
+		clock-names = "apb", "mod";
+		resets = <&ccu RST_BUS_I2S0>;
+		dmas = <&dma 0 10>,
+		       <&dma 0 10>;
+		dma-names = "rx", "tx";
+		status = "disabled";
+	};
+
 	soc {
 		compatible = "simple-bus";
 		#address-cells = <1>;
@@ -148,6 +172,16 @@
 				pins = "PF0", "PF1", "PF2", "PF3", "PF4", "PF5";
 				function = "mmc0";
 			};
+			
+			i2s0_data_pins_a: i2s0-data@0 {
+			        pins = "PD8", "PD9", "PD10", "PD11";
+			        function = "i2s";
+	        	};
+
+		        i2s0_mclk_pins_a: i2s0-mclk@0 {
+			        pins = "PD7";
+			        function = "i2s";
+		        };
 
 			spi0_pins_a: spi0-pins-pc {
 				pins = "PC0", "PC1", "PC2", "PC3";
