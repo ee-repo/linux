@@ -59,6 +59,19 @@
 		dma-names = "rx", "tx";
 		status = "disabled";
 	};
+	
+	codec: codec@1c23c00 {
+			compatible = "allwinner,suniv-codec";
+			reg = <0x01c23c00 0x400>;
+			interrupts = <21>;
+			clocks = <&ccu CLK_BUS_CODEC>,
+				 <&ccu CLK_CODEC>;
+			clock-names = "apb", "codec";
+			resets = <&ccu RST_BUS_CODEC>;
+			dmas = <&dma 0 12>, <&dma 0 12>;
+			dma-names = "rx", "tx";
+			status = "disabled";
+	};
 
 	soc {
 		compatible = "simple-bus";
