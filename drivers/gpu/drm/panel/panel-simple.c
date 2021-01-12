@@ -1942,6 +1942,31 @@ static const struct panel_desc urt_umsh_8596md_parallel = {
 	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
 };
 
+static const struct display_timing urt_a070sn01_timing = {
+	.pixelclock = { 40000000, 40000000, 40000000 },
+	.hactive = { 800, 800, 800 },
+	.hfront_porch = { 40, 40, 40 },
+	.hback_porch = { 160 - 128, 160 - 128,  160 - 128},
+	.hsync_len = { 128, 128, 128 },
+	.vactive = { 600, 600, 600 },
+	.vfront_porch = { 5, 5, 5 },
+	.vback_porch = { 23 - 4, 23 - 4, 23 - 4 },
+	.vsync_len = { 4, 4, 4 },
+	.flags = DISPLAY_FLAGS_DE_HIGH | DISPLAY_FLAGS_PIXDATA_NEGEDGE |
+		DISPLAY_FLAGS_HSYNC_LOW | DISPLAY_FLAGS_VSYNC_LOW,
+};
+
+static const struct panel_desc urt_a070sn01 = {
+	.timings = &urt_a070sn01_timing,
+	.num_timings = 1,
+	.bpc = 6,
+	.size = {
+		.width = 152,
+		.height = 91,
+	},
+	.bus_format = MEDIA_BUS_FMT_RGB666_1X18,
+};
+
 static const struct drm_display_mode winstar_wf35ltiacd_mode = {
 	.clock = 6410,
 	.hdisplay = 320,
@@ -2172,6 +2197,9 @@ static const struct of_device_id platform_of_match[] = {
 	}, {
 		.compatible = "winstar,wf35ltiacd",
 		.data = &winstar_wf35ltiacd,
+	}, {
+		.compatible = "urt,a070sn01",
+		.data = &urt_a070sn01,
 	}, {
 		/* sentinel */
 	}
