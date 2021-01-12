@@ -16,6 +16,7 @@
 	aliases {
 		serial0 = &uart0;
 		spi0 = &spi0;
+		spi1 = &spi1;
 	};
 
 	chosen {
@@ -106,6 +107,12 @@
             };
         };
     };
+};
+
+&spi1 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&spi1_pins>;
+    status = "okay";
 };
 
 &tcon0 {
