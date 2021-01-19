@@ -9,3 +9,4 @@ Development branches
 - f1c100s-480272lcd-test
 - h3-spi-nor-i2s
 - sunxi-next-i2s-dev
+- h3-spi-flash-devel-base-on-friendly-arm-works
