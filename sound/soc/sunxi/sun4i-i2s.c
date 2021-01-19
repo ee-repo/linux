@@ -754,6 +754,25 @@ static void sun4i_i2s_start_playback(struct sun4i_i2s *i2s)
 	regmap_update_bits(i2s->regmap, SUN4I_I2S_DMA_INT_CTRL_REG,
 			   SUN4I_I2S_DMA_INT_CTRL_TX_DRQ_EN,
 			   SUN4I_I2S_DMA_INT_CTRL_TX_DRQ_EN);
+  {
+    unsigned v;
+    unsigned int i;
+    regmap_read(i2s->regmap, SUN4I_I2S_DMA_INT_CTRL_REG, &v); printk("REG SUN4I_I2S_DMA_INT_CTRL_REG,  %08x\n", v);
+	  regmap_read(i2s->regmap, SUN4I_I2S_CTRL_REG,         &v); printk("REG SUN4I_I2S_CTRL_REG,          %08x\n", v);
+	  regmap_read(i2s->regmap, SUN4I_I2S_FMT0_REG,         &v); printk("REG SUN4I_I2S_FMT0_REG,          %08x\n", v);
+	  regmap_read(i2s->regmap, SUN4I_I2S_FMT1_REG,         &v); printk("REG SUN4I_I2S_FMT1_REG,          %08x\n", v);
+	  regmap_read(i2s->regmap, SUN4I_I2S_FIFO_CTRL_REG,    &v); printk("REG SUN4I_I2S_FIFO_CTRL_REG,     %08x\n", v);
+	  regmap_read(i2s->regmap, SUN4I_I2S_DMA_INT_CTRL_REG, &v); printk("REG SUN4I_I2S_DMA_INT_CTRL_REG,  %08x\n", v);
+	  regmap_read(i2s->regmap, SUN4I_I2S_CLK_DIV_REG,      &v); printk("REG SUN4I_I2S_CLK_DIV_REG,       %08x\n", v);
+	  regmap_read(i2s->regmap, SUN4I_I2S_TX_CHAN_SEL_REG,  &v); printk("REG SUN4I_I2S_TX_CHAN_SEL_REG,   %08x\n", v);
+	  regmap_read(i2s->regmap, SUN4I_I2S_TX_CHAN_MAP_REG,  &v); printk("REG SUN4I_I2S_TX_CHAN_MAP_REG,   %08x\n", v);
+	  regmap_read(i2s->regmap, SUN4I_I2S_RX_CHAN_SEL_REG,  &v); printk("REG SUN4I_I2S_RX_CHAN_SEL_REG,   %08x\n", v);
+	  regmap_read(i2s->regmap, SUN4I_I2S_RX_CHAN_MAP_REG,  &v); printk("REG SUN4I_I2S_RX_CHAN_MAP_REG,   %08x\n", v);
+    
+    for(i=0; i<= 0x3c; i+=4) {
+	    regmap_read(i2s->regmap, i, &v); printk("REG 0x%02x,   %08x\n", i, v);
+    }
+  }
 }
 
 static void sun4i_i2s_stop_capture(struct sun4i_i2s *i2s)

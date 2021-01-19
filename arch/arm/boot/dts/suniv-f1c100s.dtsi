@@ -54,8 +54,8 @@
 		clocks = <&ccu CLK_BUS_I2S0>, <&ccu CLK_I2S>;
 		clock-names = "apb", "mod";
 		resets = <&ccu RST_BUS_I2S0>;
-		dmas = <&dma 0 10>,
-		       <&dma 0 10>;
+		dmas = <&dma 0 14>,
+		       <&dma 0 14>;
 		dma-names = "rx", "tx";
 		status = "disabled";
 	};
@@ -187,14 +187,14 @@
 			};
 			
 			i2s0_data_pins_a: i2s0-data@0 {
-			        pins = "PD8", "PD9", "PD10", "PD11";
-			        function = "i2s";
-	        	};
+			  pins = "PD8", "PD9", "PD10", "PD11";
+			  function = "i2s";
+	    };
 
-		        i2s0_mclk_pins_a: i2s0-mclk@0 {
-			        pins = "PD7";
-			        function = "i2s";
-		        };
+		  i2s0_mclk_pins_a: i2s0-mclk@0 {
+			  pins = "PD7";
+			  function = "i2s";
+		  };
 
 			spi0_pins_a: spi0-pins-pc {
 				pins = "PC0", "PC1", "PC2", "PC3";
