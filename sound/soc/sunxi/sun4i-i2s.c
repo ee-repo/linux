@@ -233,7 +233,9 @@ static int sun4i_i2s_get_bclk_div(struct sun4i_i2s *i2s,
 		const struct sun4i_i2s_clk_div *bdiv = &sun4i_i2s_bclk_div[i];
 
 		if (bdiv->div == div)
+    {
 			return bdiv->val;
+    }
 	}
 
 	return -EINVAL;
@@ -334,6 +336,7 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
 	bclk_div += i2s->variant->bclk_offset;
 	mclk_div += i2s->variant->mclk_offset;
 
+  printk("set clock reg %x, %d %d\n", i2s->regmap, bclk_div, mclk_div);
 	regmap_write(i2s->regmap, SUN4I_I2S_CLK_DIV_REG,
 		     SUN4I_I2S_CLK_DIV_BCLK(bclk_div) |
 		     SUN4I_I2S_CLK_DIV_MCLK(mclk_div));
@@ -492,13 +495,16 @@ static int sun4i_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
 
 	if (i2s->variant->has_slave_select_bit) {
 		/* DAI clock master masks */
+    printk("has master/slave select bit\n");
 		switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
 		case SND_SOC_DAIFMT_CBS_CFS:
 			/* BCLK and LRCLK master */
+    printk("has master/slave select bit, master mode\n");
 			val = SUN4I_I2S_CTRL_MODE_MASTER;
 			break;
 		case SND_SOC_DAIFMT_CBM_CFM:
 			/* BCLK and LRCLK slave */
+    printk("has master/slave select bit, slave mode\n");
 			val = SUN4I_I2S_CTRL_MODE_SLAVE;
 			break;
 		default:
@@ -569,22 +575,27 @@ static void sun4i_i2s_start_capture(struct sun4i_i2s *i2s)
 static void sun4i_i2s_start_playback(struct sun4i_i2s *i2s)
 {
 	/* Flush TX FIFO */
+  printk("start playback %d\n", __LINE__);
 	regmap_update_bits(i2s->regmap, SUN4I_I2S_FIFO_CTRL_REG,
 			   SUN4I_I2S_FIFO_CTRL_FLUSH_TX,
 			   SUN4I_I2S_FIFO_CTRL_FLUSH_TX);
+  printk("start playback %d\n", __LINE__);
 
 	/* Clear TX counter */
 	regmap_write(i2s->regmap, SUN4I_I2S_TX_CNT_REG, 0);
+  printk("start playback %d\n", __LINE__);
 
 	/* Enable TX Block */
 	regmap_update_bits(i2s->regmap, SUN4I_I2S_CTRL_REG,
 			   SUN4I_I2S_CTRL_TX_EN,
 			   SUN4I_I2S_CTRL_TX_EN);
+  printk("start playback %d\n", __LINE__);
 
 	/* Enable TX DRQ */
 	regmap_update_bits(i2s->regmap, SUN4I_I2S_DMA_INT_CTRL_REG,
 			   SUN4I_I2S_DMA_INT_CTRL_TX_DRQ_EN,
 			   SUN4I_I2S_DMA_INT_CTRL_TX_DRQ_EN);
+  printk("start playback %d\n", __LINE__);
 }
 
 static void sun4i_i2s_stop_capture(struct sun4i_i2s *i2s)
@@ -647,6 +658,7 @@ static int sun4i_i2s_trigger(struct snd_pcm_substream *substream, int cmd,
 static int sun4i_i2s_startup(struct snd_pcm_substream *substream,
 			     struct snd_soc_dai *dai)
 {
+  int ret;
 	struct sun4i_i2s *i2s = snd_soc_dai_get_drvdata(dai);
 
 	/* Enable the whole hardware block */
@@ -659,7 +671,9 @@ static int sun4i_i2s_startup(struct snd_pcm_substream *substream,
 			   SUN4I_I2S_CTRL_SDO_EN(0));
 
 
-	return clk_prepare_enable(i2s->mod_clk);
+  ret = clk_prepare_enable(i2s->mod_clk);
+  printk("I2S startup, clock enable: %d\n", ret);
+	return ret;
 }
 
 static void sun4i_i2s_shutdown(struct snd_pcm_substream *substream,
@@ -687,6 +701,7 @@ static int sun4i_i2s_set_sysclk(struct snd_soc_dai *dai, int clk_id,
 		return -EINVAL;
 
 	i2s->mclk_freq = freq;
+  dev_err(dai->dev, "\nMCLK FREQ: %d\n", freq);
 
 	return 0;
 }
@@ -855,6 +870,7 @@ static int sun4i_i2s_runtime_resume(struct device *dev)
 	int ret;
 
 	ret = clk_prepare_enable(i2s->bus_clk);
+  printk("I2S resume, clock enable: %d\n", ret);
 	if (ret) {
 		dev_err(dev, "Failed to enable bus clock\n");
 		return ret;
@@ -1091,10 +1107,10 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
 
 	i2s->playback_dma_data.addr = res->start +
 					i2s->variant->reg_offset_txdata;
-	i2s->playback_dma_data.maxburst = 8;
+	i2s->playback_dma_data.maxburst = 4;
 
 	i2s->capture_dma_data.addr = res->start + SUN4I_I2S_FIFO_RX_REG;
-	i2s->capture_dma_data.maxburst = 8;
+	i2s->capture_dma_data.maxburst = 4;
 
 	pm_runtime_enable(&pdev->dev);
 	if (!pm_runtime_enabled(&pdev->dev)) {

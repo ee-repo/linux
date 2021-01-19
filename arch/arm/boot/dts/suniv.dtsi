@@ -48,12 +48,13 @@
 		};
 	};
 
+/*
 	de: display-engine {
 		compatible = "allwinner,suniv-display-engine";
 		allwinner,pipelines = <&fe0>;
 		status = "disabled";
 	};
-
+*/
 		dma: dma-controller@1c02000 {
 			compatible = "allwinner,suniv-dma";
 			reg = <0x01c02000 0x1000>;
@@ -76,6 +77,19 @@
 			status = "disabled";
 		};
 
+		i2s0: i2s@1c22000 {
+			#sound-dai-cells = <0>;
+			compatible = "allwinner,sun4i-a10-i2s";
+			reg = <0x01c22000 0x400>;
+			interrupts = <35>;
+			clocks = <&ccu CLK_BUS_I2S0>, <&ccu CLK_I2S>;
+			clock-names = "apb", "mod";
+			resets = <&ccu RST_BUS_I2S0>;
+			dmas = <&dma 0 14>,
+			       <&dma 0 14>;
+			dma-names = "rx", "tx";
+			status = "disabled";
+		};
 
 	soc {
 		compatible = "simple-bus";
@@ -130,14 +144,14 @@
 			#address-cells = <1>;
 			#size-cells = <0>;
 		};
-
+/*
 		tcon0: lcd-controller@1c0c000 {
 			compatible = "allwinner,suniv-tcon";
 			reg = <0x01c0c000 0x1000>;
 			interrupts = <29>;
 			clocks = <&ccu CLK_BUS_LCD>,
 				 <&ccu CLK_TCON>,
-				 <&osc24M>;	/* Still unknown */
+				 <&osc24M>;	
 			clock-names = "ahb",
 				      "tcon-ch0",
 				      "tcon-ch1";
@@ -168,7 +182,7 @@
 				};
 			};
 		};
-
+*/
 		mmc0: mmc@1c0f000 {
 			compatible = "allwinner,suniv-mmc",
 				     "allwinner,sun7i-a20-mmc";
@@ -243,6 +257,7 @@
 				function = "spi0";
 			};
 
+/*
 			lcd_rgb666_pins: lcd-rgb666-pins {
 				pins = "PD0", "PD1", "PD2", "PD3", "PD4",
 				       "PD5", "PD6", "PD7", "PD8", "PD9",
@@ -251,7 +266,7 @@
 				       "PD20", "PD21";
 				function = "lcd";
 			};
-
+*/
 			uart0_pins_a: uart-pins-pe {
 				pins = "PE0", "PE1";
 				function = "uart0";
@@ -261,6 +276,16 @@
 				pins = "PF0", "PF1", "PF2", "PF3", "PF4", "PF5";
 				function = "mmc0";
 			};
+			
+			i2s0_data_pins_a: i2s0-data@0 {
+		        pins = "PD8", "PD9", "PD10", "PD11";
+		        function = "i2s0";
+	        };
+
+	        i2s0_mclk_pins_a: i2s0-mclk@0 {
+		        pins = "PD7";
+		        function = "i2s0";
+	        };
 		};
 
 		timer@1c20c00 {
@@ -333,7 +358,7 @@
 			#phy-cells = <1>;
 			status = "disabled";
 		};
-
+/*
 		fe0: display-frontend@1e00000 {
 			compatible = "allwinner,suniv-display-frontend";
 			reg = <0x01e00000 0x20000>;
@@ -361,7 +386,8 @@
 				};
 			};
 		};
-
+*/
+/*
 		be0: display-backend@1e60000 {
 			compatible = "allwinner,suniv-display-backend";
 			reg = <0x01e60000 0x10000>;
@@ -403,5 +429,6 @@
 				};
 			};
 		};
+    */
 	};
 };
