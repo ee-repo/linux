@@ -7,3 +7,5 @@ Reference from
 Development branches
 - 4.19-f1c-i2s-dev
 - f1c100s-480272lcd-test
+- h3-spi-nor-i2s
+- sunxi-next-i2s-dev
